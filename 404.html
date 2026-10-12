@@ -37,6 +37,8 @@
 .redirect-overlay.visible {
   opacity: 1;
 }</style></head><body><h1 class="sr-only">404 — This page doesn't exist</h1><div class="redirect-overlay" id="redirectOverlay">Redirecting to the correct page…</div><script>(function () {
+  const base = "/temporary-pBLI1";
+
   function resolveTarget(rawPath) {
     let p = rawPath;
     for (let i = p.length - 1; i >= 0; i--) {
@@ -47,39 +49,52 @@
   }
 
   const redirectMap = {
-    "/temporary-pBLI1/legal/tos": "/temporary-pBLI1/legal/terms",
-    "/temporary-pBLI1/terms": "/temporary-pBLI1/legal/terms",
-    "/temporary-pBLI1/privacy": "/temporary-pBLI1/legal/privacy",
-    "/temporary-pBLI1/tos": "/temporary-pBLI1/legal/terms",
-    "/temporary-pBLI1/terms-of-service": "/temporary-pBLI1/legal/terms",
-    "/temporary-pBLI1/privacy-policy": "/temporary-pBLI1/legal/privacy",
-    "/temporary-pBLI1/legal/privacy-policy": "/temporary-pBLI1/legal/privacy",
-    "/temporary-pBLI1/legal/terms-of-service": "/temporary-pBLI1/legal/terms",
-    "/temporary-pBLI1/add": "/temporary-pBLI1/authorize",
-    "/temporary-pBLI1/invite": "/temporary-pBLI1/authorize",
-    "/temporary-pBLI1/support": "/temporary-pBLI1/discord",
-    "/temporary-pBLI1/community": "/temporary-pBLI1/discord",
-    "/temporary-pBLI1/discord-server": "/temporary-pBLI1/discord",
-    "/temporary-pBLI1/server": "/temporary-pBLI1/discord",
-    "/temporary-pBLI1/support-server": "/temporary-pBLI1/discord"
+    "/legal/tos": "/legal/terms",
+    "/terms": "/legal/terms",
+    "/privacy": "/legal/privacy",
+    "/tos": "/legal/terms",
+    "/terms-of-service": "/legal/terms",
+    "/privacy-policy": "/legal/privacy",
+    "/legal/privacy-policy": "/legal/privacy",
+    "/legal/terms-of-service": "/legal/terms",
+    "/add": "/authorize",
+    "/invite": "/authorize",
+    "/support": "/discord",
+    "/community": "/discord",
+    "/discord-server": "/discord",
+    "/server": "/discord",
+    "/support-server": "/discord"
   };
 
-  const path = resolveTarget(window.location.pathname);
+  const full = window.location.pathname;
+  const relative = full.startsWith(base) ? full.slice(base.length) : full;
+  const path = resolveTarget(relative);
 
-  let tgt = redirectMap[path];
-  let preserveQuery = false;
-
-  if (path === "/temporary-pBLI1/launch-roblox") {
-    tgt = "/temporary-pBLI1/assets/roblox-launch.html";
-    preserveQuery = true;
+  if (path === "/roblox-launch" || path === "/launch-roblox") {
+    const file = base + "/assets/roblox-launch.html";
+    fetch(file)
+      .then(function (res) {
+        if (!res.ok) throw new Error("missing");
+        return res.text();
+      })
+      .then(function (html) {
+        document.open();
+        document.write(html);
+        document.close();
+      })
+      .catch(function () {
+        window.location.replace(file + window.location.search);
+      });
+    return;
   }
 
+  const tgt = redirectMap[path];
+
   if (tgt) {
-    const destination = preserveQuery ? tgt + window.location.search : tgt;
     const ovl = document.getElementById("redirectOverlay");
     ovl.classList.add("visible");
     setTimeout(function () {
-      window.location.replace(destination);
+      window.location.replace(base + tgt);
     }, 815);
   }
 })();</script><script>window.NF_HOME = "/temporary-pBLI1/"</script><script src="https://anoxle.github.io/404.js"></script></body></html>
