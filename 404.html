@@ -78,9 +78,11 @@
         return res.text();
       })
       .then(function (html) {
+        const title = new DOMParser().parseFromString(html, "text/html").title;
         document.open();
         document.write(html);
         document.close();
+        if (title) document.title = title;
       })
       .catch(function () {
         window.location.replace(file + window.location.search);
